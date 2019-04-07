@@ -35,3 +35,19 @@ TEST_CASE("get a name and extension from a filename", "[filename]") {
     REQUIRE(name == "file_name_without_ext");
     REQUIRE(extension.empty());
 }
+
+TEST_CASE("detect lower/upper/snake/camel case", "[symbol]") {
+    REQUIRE(isCamelCase("thisIsACamelCase") == true);
+    REQUIRE(isCamelCase("ThisIsNotACamelCase") == false);
+    REQUIRE(isCamelCase("This_Is_Also_Not_A_Camel_Case") == false);
+
+    REQUIRE(isPascalCase("ThisIsPascalCase") == true);
+    REQUIRE(isPascalCase("thisIsNotAPascalCase") == false);
+    REQUIRE(isPascalCase("THIS_IS_ALSO_NOT_A_PASCAL_CASE") == false);
+
+    REQUIRE(isLowerSnakeCase("this_is_lower_snake_Case") == true);
+    REQUIRE(isLowerSnakeCase("thisIsNotALowerSnakeCase") == false);
+
+    REQUIRE(isUpperSnakeCase("THIS_IS_UPPER_SNAKE_CASE") == true);
+    REQUIRE(isUpperSnakeCase("ThisIsNotAUpperSnakeCase") == false);
+}
