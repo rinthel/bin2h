@@ -13,6 +13,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND
+        ${CMAKE_COMMAND} -E make_directory ${DEP_INSTALL_DIR}/include &&
         ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/dep_clipp-prefix/src/dep_clipp/include/clipp.h
             ${DEP_INSTALL_DIR}/include
