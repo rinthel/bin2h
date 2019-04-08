@@ -68,7 +68,10 @@ int main(int argc, char** argv) {
             std::tie(inputDirectoryPath, inputFilePath) = bin2h::getDirectoryAndFilename(inputFilename);
             std::tie(inputName, inputExtension) = bin2h::getNameAndExtension(inputFilePath);
 
-            out << fmt::format("static const char {}[] = ", bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase)) << '{' << std::endl;
+            auto arrayName = bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase);
+            auto sizeName = arrayName + "_SIZE";
+            out << fmt::format("static size_t {} = {};", arrayName, filesize) << std::endl;
+            out << fmt::format("static const char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
             for (size_t i = 0; i < data.size(); ++i) {
                 if (i % 8 == 0) {
                     out << "    ";
