@@ -70,8 +70,8 @@ int main(int argc, char** argv) {
 
             auto arrayName = bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase);
             auto sizeName = arrayName + "_SIZE";
-            out << fmt::format("static unsigned long {} = {};", sizeName, filesize) << std::endl;
-            out << fmt::format("static const char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
+            out << fmt::format("static const unsigned long {} = {};", sizeName, filesize) << std::endl;
+            out << fmt::format("static const unsigned char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
             for (size_t i = 0; i < data.size(); ++i) {
                 if (i % 8 == 0) {
                     out << "    ";
