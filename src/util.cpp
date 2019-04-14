@@ -1,6 +1,7 @@
 #include "util.h"
 #include <algorithm>
 #include <sstream>
+#include <cctype>
 
 namespace bin2h {
 
