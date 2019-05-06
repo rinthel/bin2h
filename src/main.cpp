@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
     bool help = false;
     bool verboseMode = false;
     bool comment = false;
+    size_t align = 1;
     std::vector<std::string> inputFilenames;
     std::string outputFilename;
     auto cli = (
@@ -22,7 +23,8 @@ int main(int argc, char** argv) {
         (clipp::required("-o", "--output") & clipp::value("output header file").set(outputFilename)),
         clipp::option("-h", "--help").set(help, true),
         clipp::option("-v", "--verbose").set(verboseMode, true),
-        clipp::option("-c", "--comment").set(comment, true)
+        clipp::option("-c", "--comment").set(comment, true),
+        (clipp::option("-a", "--align") & clipp::value("align byte size").set(align))
     );
 
     auto parseResult = clipp::parse(argc, argv, cli);
@@ -73,17 +75,19 @@ int main(int argc, char** argv) {
             auto arrayName = bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase);
             auto sizeName = arrayName + "_SIZE";
             std::stringstream commentString;
-            out << fmt::format("static const unsigned long {} = {};", sizeName, filesize) << std::endl;
+            size_t alignedSize = (static_cast<size_t>(filesize) + align - 1) / align * align;
+            out << fmt::format("static const unsigned long {} = {};", sizeName, alignedSize) << std::endl;
             out << fmt::format("static const unsigned char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
 
-            for (size_t i = 0; i < data.size(); ++i) {
+            for (size_t i = 0; i < alignedSize; ++i) {
                 if (i % 8 == 0) {
                     out << "    ";
                     commentString.str(std::string());
                     commentString << " // ";
                 }
-                out << fmt::format("0x{:02x}, ", data[i]);
-                commentString << static_cast<char>((data[i] >= 32 && data[i] < 127 ? data[i] : ' '));
+                uint8_t elem = (i < data.size() ? data[i] : 0);
+                out << fmt::format("0x{:02x}, ", elem);
+                commentString << static_cast<char>((elem >= 32 && elem < 127 ? elem : ' '));
                 if (i % 8 == 7) {
                     if (comment) {
                         out << commentString.str();
@@ -91,7 +95,7 @@ int main(int argc, char** argv) {
                     out << std::endl;
                 }
             }
-            if (data.size() % 8 < 7) {
+            if (alignedSize % 8 != 0) {
                 if (comment) {
                     out << commentString.str();
                 }
