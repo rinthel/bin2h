@@ -14,13 +14,15 @@
 int main(int argc, char** argv) {
     bool help = false;
     bool verboseMode = false;
+    bool comment = false;
     std::vector<std::string> inputFilenames;
     std::string outputFilename;
     auto cli = (
         clipp::values("input binary files").required(true).set(inputFilenames),
         (clipp::required("-o", "--output") & clipp::value("output header file").set(outputFilename)),
         clipp::option("-h", "--help").set(help, true),
-        clipp::option("-v", "--verbose").set(verboseMode, true)
+        clipp::option("-v", "--verbose").set(verboseMode, true),
+        clipp::option("-c", "--comment").set(comment, true)
     );
 
     auto parseResult = clipp::parse(argc, argv, cli);
@@ -70,19 +72,31 @@ int main(int argc, char** argv) {
 
             auto arrayName = bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase);
             auto sizeName = arrayName + "_SIZE";
+            std::stringstream commentString;
             out << fmt::format("static const unsigned long {} = {};", sizeName, filesize) << std::endl;
             out << fmt::format("static const unsigned char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
+
             for (size_t i = 0; i < data.size(); ++i) {
                 if (i % 8 == 0) {
                     out << "    ";
+                    commentString.str(std::string());
+                    commentString << " // ";
                 }
                 out << fmt::format("0x{:02x}, ", data[i]);
+                commentString << static_cast<char>((data[i] >= 32 && data[i] < 127 ? data[i] : ' '));
                 if (i % 8 == 7) {
+                    if (comment) {
+                        out << commentString.str();
+                    }
                     out << std::endl;
                 }
             }
-            if (data.size() % 8 < 7)
+            if (data.size() % 8 < 7) {
+                if (comment) {
+                    out << commentString.str();
+                }
                 out << std::endl;
+            }
             out << "};" << std::endl << std::endl;
         }
 
