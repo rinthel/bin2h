@@ -90,14 +90,14 @@ int main(int argc, char** argv) {
                 commentString << static_cast<char>((elem >= 32 && elem < 127 ? elem : ' '));
                 if (i % 8 == 7) {
                     if (comment) {
-                        out << commentString.str();
+                        out << commentString.str() << " //";
                     }
                     out << std::endl;
                 }
             }
             if (alignedSize % 8 != 0) {
                 if (comment) {
-                    out << commentString.str();
+                    out << commentString.str() << " //";
                 }
                 out << std::endl;
             }
