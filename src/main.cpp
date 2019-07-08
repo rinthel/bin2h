@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
         for (auto&& inputFilename: inputFilenames) {
             // get input binary file
             spdlog::info("open input file: {}", inputFilename);
-            std::ifstream in(inputFilename);
+            std::ifstream in(inputFilename, std::ifstream::binary);
             if (!in.is_open()) {
                 throw std::ios_base::failure(fmt::format("failed to open file \"{}\"", inputFilename));
             }
@@ -64,9 +64,16 @@ int main(int argc, char** argv) {
             auto filesize = in.tellg();
             std::vector<uint8_t> data;
             data.resize((size_t)filesize);
+            memset(data.data(), 255, data.size());
             in.seekg(0, in.beg);
-            spdlog::info("read data of file {}: {}", inputFilename, filesize);
+            spdlog::info("read data of file {}: {}", inputFilename, data.size());
             in.read(reinterpret_cast<char*>(data.data()), filesize);
+            if (in)
+                spdlog::info("successfully read {} bytes", filesize);
+            else
+                spdlog::info("something wrong at {}", in.tellg());
+            
+            in.close();
 
             std::string inputDirectoryPath, inputFilePath, inputName, inputExtension;
             std::tie(inputDirectoryPath, inputFilePath) = bin2h::getDirectoryAndFilename(inputFilename);
@@ -87,7 +94,7 @@ int main(int argc, char** argv) {
                 }
                 uint8_t elem = (i < data.size() ? data[i] : 0);
                 out << fmt::format("0x{:02x}, ", elem);
-                commentString << static_cast<char>((elem >= 32 && elem < 127 ? elem : ' '));
+                commentString << ((elem >= 32 && elem < 127) ? static_cast<char>(elem) : '.');
                 if (i % 8 == 7) {
                     if (comment) {
                         out << commentString.str() << " //";
