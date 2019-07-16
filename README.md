@@ -26,9 +26,10 @@ bin2h use the cmake build setting. Please make sure that cmake is installed in y
 ### Usage
 
 ```sh
-> bin2h <inputFilename>... -o <outputFilename> [-v] [-c] [-a align-byte-size]
+> bin2h <inputFilename>... -o <outputFilename> [-v] [-c] [-a align-byte-size] [-l byte-count-per-line]
 ```
 
 - `-v`: verbose mode
 - `-c`: visualize binary data as a comment
-- `-a`: resulting byte array would be byte-aligned with specific size
+- `-a`: resulting byte array would be byte-aligned with specific size (default: 1)
+- `-l`: byte count per line (default: 8)
