@@ -16,6 +16,7 @@ int main(int argc, char** argv) {
     bool verboseMode = false;
     bool comment = false;
     size_t align = 1;
+    size_t bytePerLine = 8;
     std::vector<std::string> inputFilenames;
     std::string outputFilename;
     auto cli = (
@@ -24,7 +25,8 @@ int main(int argc, char** argv) {
         clipp::option("-h", "--help").set(help, true),
         clipp::option("-v", "--verbose").set(verboseMode, true),
         clipp::option("-c", "--comment").set(comment, true),
-        (clipp::option("-a", "--align") & clipp::value("align byte size").set(align))
+        (clipp::option("-a", "--align") & clipp::value("align byte size").set(align)),
+        (clipp::option("-l", "--line") & clipp::value("byte count per line").set(bytePerLine))
     );
 
     auto parseResult = clipp::parse(argc, argv, cli);
@@ -87,24 +89,24 @@ int main(int argc, char** argv) {
             out << fmt::format("static const unsigned char {}[{}] = ", arrayName, sizeName) << '{' << std::endl;
 
             for (size_t i = 0; i < alignedSize; ++i) {
-                if (i % 8 == 0) {
+                if (i % bytePerLine == 0) {
                     out << "    ";
                     commentString.str(std::string());
-                    commentString << " // ";
+                    commentString << "// ";
                 }
                 uint8_t elem = (i < data.size() ? data[i] : 0);
                 out << fmt::format("0x{:02x}, ", elem);
-                commentString << ((elem >= 32 && elem < 127) ? static_cast<char>(elem) : '.');
-                if (i % 8 == 7) {
+                commentString << ((elem >= 32 && elem < 127 && elem != '\\') ? static_cast<char>(elem) : '.');
+                if (i % bytePerLine == bytePerLine - 1) {
                     if (comment) {
-                        out << commentString.str() << " //";
+                        out << commentString.str();
                     }
                     out << std::endl;
                 }
             }
-            if (alignedSize % 8 != 0) {
+            if (alignedSize % bytePerLine != 0) {
                 if (comment) {
-                    out << commentString.str() << " //";
+                    out << commentString.str();
                 }
                 out << std::endl;
             }
