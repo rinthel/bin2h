@@ -97,7 +97,8 @@ std::vector<std::string> splitSymbol(const std::string& symbol, Delimiter delimi
     {
         char c = symbol[i];
         if ((delimiter == Delimiter::upperCase && isUpperCase(c)) ||
-            (delimiter == Delimiter::underscore && c == '_'))
+            (delimiter == Delimiter::underscore && c == '_') ||
+            !isCharacter(c))
         {
             auto token = symbol.substr(prevPos, i - prevPos);
             if (!token.empty() && token.find('_') == std::string::npos)

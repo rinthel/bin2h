@@ -79,6 +79,13 @@ TEST_CASE("split symbol with delimiter", "[symbol]") {
     REQUIRE(tokens[0] == "UPPER");
     REQUIRE(tokens[1] == "SNAKE");
     REQUIRE(tokens[2] == "CASE");
+
+    tokens = splitSymbol("file.name.has...a.lot.of.dots.bin", Delimiter::underscore);
+    REQUIRE(tokens.size() == 8);
+    REQUIRE(tokens[0] == "file");
+    REQUIRE(tokens[1] == "name");
+    REQUIRE(tokens[2] == "has");
+    REQUIRE(tokens[3] == "a");
 }
 
 TEST_CASE("convert symbol into specific case notation", "[symbol]") {
