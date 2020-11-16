@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
     bool help = false;
     bool verboseMode = false;
     bool comment = false;
+    bool includeExtension = false;
     size_t align = 1;
     size_t bytePerLine = 8;
     std::vector<std::string> inputFilenames;
@@ -29,7 +30,8 @@ int main(int argc, char** argv) {
         clipp::option("-v", "--verbose").set(verboseMode, true),
         clipp::option("-c", "--comment").set(comment, true),
         (clipp::option("-a", "--align") & clipp::value("align byte size").set(align)),
-        (clipp::option("-l", "--line") & clipp::value("byte count per line").set(bytePerLine))
+        (clipp::option("-l", "--line") & clipp::value("byte count per line").set(bytePerLine)),
+        (clipp::option("-e", "--include-extension").set(includeExtension))
     );
 
     auto parseResult = clipp::parse(argc, argv, cli);
@@ -84,7 +86,9 @@ int main(int argc, char** argv) {
             std::tie(inputDirectoryPath, inputFilePath) = bin2h::getDirectoryAndFilename(inputFilename);
             std::tie(inputName, inputExtension) = bin2h::getNameAndExtension(inputFilePath);
 
-            auto arrayName = bin2h::convertSymbol(inputName, bin2h::CaseNotation::upperSnakeCase);
+            auto arrayName = bin2h::convertSymbol(
+                includeExtension ? inputFilePath : inputName,
+                bin2h::CaseNotation::upperSnakeCase);
             auto sizeName = arrayName + "_SIZE";
             std::stringstream commentString;
             size_t alignedSize = (static_cast<size_t>(filesize) + align - 1) / align * align;
