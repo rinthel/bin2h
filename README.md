@@ -6,6 +6,8 @@ simple binary-to-c(cpp)header converter.
 
 - merge multiple binary files into one header source code
 - set variable names of each binary file automatically by UPPER_SNAKE_CASE
+- check input file's MD5 checksum and compare it with the output file
+  that already exists before generating a new output header
 
 ### Build
 
@@ -26,10 +28,13 @@ bin2h use the cmake build setting. Please make sure that cmake is installed in y
 ### Usage
 
 ```sh
-> bin2h <inputFilename>... -o <outputFilename> [-v] [-c] [-a align-byte-size] [-l byte-count-per-line]
+> bin2h <inputFilename>... -o <outputFilename> [-v] [-c] [-a align-byte-size]
+    [-l byte-count-per-line] [-e] [-f]
 ```
 
 - `-v`: verbose mode
 - `-c`: visualize binary data as a comment
 - `-a`: resulting byte array would be byte-aligned with specific size (default: 1)
 - `-l`: byte count per line (default: 8)
+- `-e`: include input file's extension for naming array variables
+- `-f`: force to generate output, although input does not change

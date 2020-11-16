@@ -28,11 +28,11 @@ int main(int argc, char** argv) {
         clipp::values("input binary files").required(true).set(inputFilenames),
         (clipp::required("-o", "--output") & clipp::value("output header file").set(outputFilename)),
         clipp::option("-h", "--help").set(help, true) % "show this help text",
-        clipp::option("-v", "--verbose").set(verboseMode, true) % "print verbose log",
-        clipp::option("-c", "--comment").set(comment, true) % "write ascii output of binaries at the end of each line",
-        (clipp::option("-a", "--align") & clipp::value("align byte size").set(align)) % "set align byte size of each array",
-        (clipp::option("-l", "--line") & clipp::value("byte count per line").set(bytePerLine)) % "set byte count per line",
-        (clipp::option("-e", "--include-extension").set(includeExtension)) % "include extension for naming array variables",
+        clipp::option("-v", "--verbose").set(verboseMode, true) % "verbose mode",
+        clipp::option("-c", "--comment").set(comment, true) % "visualize binary data as a comment",
+        (clipp::option("-a", "--align") & clipp::value("align byte size").set(align)) % "resulting byte array would be byte-aligned with specific size (default: 1)",
+        (clipp::option("-l", "--line") & clipp::value("byte count per line").set(bytePerLine)) % "byte count per line (default: 8)",
+        (clipp::option("-e", "--include-extension").set(includeExtension)) % "include input file's extension for naming array variables",
         (clipp::option("-f", "--force").set(force)) % "force to generate output, although input does not change"
     );
 
