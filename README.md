@@ -6,8 +6,18 @@ simple binary-to-c(cpp)header converter.
 
 - merge multiple binary files into one header source code
 - set variable names of each binary file automatically by UPPER_SNAKE_CASE
-- check input file's MD5 checksum and compare it with the output file
-  that already exists before generating a new output header
+- can align an output byte array with the user-specified byte size
+- can visualize an output byte array as ASCII codes
+- can check input file's MD5 checksum and compare it with the checksum stored
+  in the output file that already exists before generating a new output header file
+
+### Dependency
+
+- all dependencies are in the repository or managed by `Dependency.cmake`
+- **[spdlog](https://github.com/gabime/spdlog.git)** for logging
+- **[clipp](https://github.com/muellan/clipp.git)** for parsing command arguments
+- **[catch2](https://github.com/catchorg/Catch2.git)** for unit testing
+- **[picohash](https://github.com/catchorg/Catch2.git)** for computing a MD5 checksum
 
 ### Build
 
